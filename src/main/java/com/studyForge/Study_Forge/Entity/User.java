@@ -1,11 +1,11 @@
 package com.studyForge.Study_Forge.Entity;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 
 @Entity
@@ -24,4 +24,7 @@ public class User {
     private String password;
     private String about;
     private String imageName;
-}
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "createdBy", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore // prevents infinite recursion in response serialization
+    private List<Subject> subjects;}
