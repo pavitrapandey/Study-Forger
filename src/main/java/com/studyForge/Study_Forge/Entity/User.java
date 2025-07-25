@@ -18,9 +18,11 @@ import java.util.List;
 public class User {
     @Id
     private String id;
+    @Column(unique = true)
     private String username;
     @Column(unique = true)
     private String email;
+    private String name;
     private String password;
     private String about;
     private String imageName;

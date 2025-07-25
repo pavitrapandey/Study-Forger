@@ -1,9 +1,12 @@
 package com.studyForge.Study_Forge.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lombok.*;
 import org.antlr.v4.runtime.misc.NotNull;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -22,8 +25,11 @@ public class Subject{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by_id")
     @ToString.Exclude // Important to avoid LazyInitializationException in logs
-    @Nonnull
     private User createdBy;
+
+    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore // prevents infinite recursion in response serialization
+    private List<Topic> topics; // foreign key to the Topic entity
 
     // Additional fields can be added as needed
 }

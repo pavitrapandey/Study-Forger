@@ -3,6 +3,7 @@ package com.studyForge.Study_Forge.Service.ServiceImpl;
 import com.studyForge.Study_Forge.Dto.UserDto;
 import com.studyForge.Study_Forge.Entity.User;
 import com.studyForge.Study_Forge.Exception.EmailAlreadyExistException;
+import com.studyForge.Study_Forge.Exception.UsernameAlreadyTakenException;
 import com.studyForge.Study_Forge.Repository.UserRepository;
 import com.studyForge.Study_Forge.Service.UserService;
 import org.modelmapper.ModelMapper;
@@ -32,9 +33,16 @@ public class UserServiceImpl implements UserService {
         {
             throw new EmailAlreadyExistException("Email"+ userDto.getEmail() + " already exists");
         }
+        // Check if the username already exists
+        User existingUsername = userRepository.findByUsername(userDto.getUsername());
+        if (existingUsername != null) {
+            throw new UsernameAlreadyTakenException("Username " + userDto.getUsername() + " already exists.");
+        }
         //Convert UserDto to User Entity
         User user = dtoToEntity(userDto);
         user.setId(user.getId());
+        user.setEmail(user.getEmail());
+        user.setName(user.getName());
         user.setPassword(user.getPassword());
         user.setImageName(user.getImageName());
         user.setAbout(user.getAbout());
@@ -48,9 +56,22 @@ public class UserServiceImpl implements UserService {
     public UserDto updateUser(String userId, UserDto userDto){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
-        // Update user fields
+
+        // Check if the email already exists for another user
+        Optional<User> existingUser = userRepository.findByEmail(userDto.getEmail());
+
+                 if (existingUser.isPresent() && !existingUser.get().getId().equals(userId)) {
+            throw new EmailAlreadyExistException("Email " + userDto.getEmail() + " already exists for another user.");
+        }
+         //check if username exist or already taken
+        User existingUsername = userRepository.findByUsername(userDto.getUsername());
+        if (existingUsername != null && !existingUsername.getId().equals(userId)) {
+            throw new UsernameAlreadyTakenException("Username " + userDto.getUsername() + " already exists for another user.");
+        }
+         // Update user fields
         user.setUsername(userDto.getUsername());
         user.setEmail(userDto.getEmail());
+        user.setName(userDto.getName());
         user.setPassword(userDto.getPassword());
         user.setAbout(userDto.getAbout());
         user.setImageName(userDto.getImageName());
