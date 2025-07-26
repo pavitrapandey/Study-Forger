@@ -8,8 +8,13 @@ import com.studyForge.Study_Forge.Repository.UserRepository;
 import com.studyForge.Study_Forge.Service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,6 +27,11 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+
+    @Value("${user.profile.image.path}")
+    private String filePath;
+
 
     @Override
     public UserDto createUser(UserDto userDto)
@@ -106,6 +116,17 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(String userId){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        String imageName=user.getImageName();
+        String fullPath=filePath+imageName;
+
+        Path path= Path.of(fullPath);
+        try {
+            Files.delete(path);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         userRepository.delete(user);
 
     }
