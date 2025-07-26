@@ -1,6 +1,4 @@
-package com.studyForge.Study_Forge.Service;
-
-import com.studyForge.Study_Forge.Dto.SubjectDto;
+package com.studyForge.Study_Forge.Subject;
 
 import java.util.List;
 
@@ -20,4 +18,5 @@ public interface SubjectService {
     //Search subject by name
     List<SubjectDto> searchSubjectByName(String subjectName, String userId);
 
+    Subject findSubjectById(String id);
 }

@@ -1,7 +1,5 @@
-package com.studyForge.Study_Forge.Dto;
+package com.studyForge.Study_Forge.Topic;
 import lombok.*;
-
-import java.util.Date;
 
 @Getter
 @Setter

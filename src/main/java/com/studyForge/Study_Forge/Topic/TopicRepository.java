@@ -1,7 +1,6 @@
-package com.studyForge.Study_Forge.Repository;
+package com.studyForge.Study_Forge.Topic;
 
-import com.studyForge.Study_Forge.Entity.Subject;
-import com.studyForge.Study_Forge.Entity.Topic;
+import com.studyForge.Study_Forge.Subject.Subject;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

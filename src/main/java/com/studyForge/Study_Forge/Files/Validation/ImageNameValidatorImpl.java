@@ -1,4 +1,4 @@
-package com.studyForge.Study_Forge.Validation;
+package com.studyForge.Study_Forge.Files.Validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

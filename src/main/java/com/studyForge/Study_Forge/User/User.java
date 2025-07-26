@@ -1,7 +1,8 @@
-package com.studyForge.Study_Forge.Entity;
+package com.studyForge.Study_Forge.User;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.studyForge.Study_Forge.Subject.Subject;
 import jakarta.persistence.*;
 import lombok.*;
 

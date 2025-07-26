@@ -1,5 +1,6 @@
-package com.studyForge.Study_Forge.Dto;
+package com.studyForge.Study_Forge.Subject;
 
+import com.studyForge.Study_Forge.User.UserDto;
 import lombok.*;
 
 @Getter

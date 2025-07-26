@@ -1,11 +1,8 @@
-package com.studyForge.Study_Forge.Service.ServiceImpl;
+package com.studyForge.Study_Forge.User;
 
-import com.studyForge.Study_Forge.Dto.UserDto;
-import com.studyForge.Study_Forge.Entity.User;
 import com.studyForge.Study_Forge.Exception.EmailAlreadyExistException;
+import com.studyForge.Study_Forge.Exception.ResourceNotFoundException;
 import com.studyForge.Study_Forge.Exception.UsernameAlreadyTakenException;
-import com.studyForge.Study_Forge.Repository.UserRepository;
-import com.studyForge.Study_Forge.Service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
@@ -153,6 +149,11 @@ public class UserServiceImpl implements UserService {
     private User dtoToEntity(UserDto userDto){
 
         return modelMapper.map(userDto,User.class);
+    }
+
+    @Override
+    public User findUserById(String id) {
+        return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
     }
 
 }

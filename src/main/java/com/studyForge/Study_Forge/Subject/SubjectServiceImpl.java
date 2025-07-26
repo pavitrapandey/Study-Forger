@@ -1,19 +1,14 @@
-package com.studyForge.Study_Forge.Service.ServiceImpl;
+package com.studyForge.Study_Forge.Subject;
 
-import com.studyForge.Study_Forge.Dto.SubjectDto;
-import com.studyForge.Study_Forge.Dto.UserDto;
-import com.studyForge.Study_Forge.Entity.Subject;
-import com.studyForge.Study_Forge.Entity.User;
 import com.studyForge.Study_Forge.Exception.BadApiRequest;
-import com.studyForge.Study_Forge.Repository.SubjectRepository;
-import com.studyForge.Study_Forge.Repository.UserRepository;
-import com.studyForge.Study_Forge.Service.SubjectService;
+import com.studyForge.Study_Forge.Exception.ResourceNotFoundException;
+import com.studyForge.Study_Forge.User.User;
+import com.studyForge.Study_Forge.User.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -24,7 +19,7 @@ public class SubjectServiceImpl implements SubjectService
     private SubjectRepository subjectRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -34,8 +29,7 @@ public class SubjectServiceImpl implements SubjectService
         String subjectId = UUID.randomUUID().toString();
 
         // 2. Fetch creator user from DTO's ID
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + subjectDto.getCreatedBy().getId()));
+        User user =userService.findUserById(userId);
 
         // 3. Convert DTO to Entity
         Subject subject = Subject.builder()
@@ -71,8 +65,8 @@ public class SubjectServiceImpl implements SubjectService
 
     @Override
     public List<SubjectDto> getAllSubjectsByUserId(String userId){
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
-       List<Subject> subjects = subjectRepository.findByCreatedById(user.getId());
+        User user = userService.findUserById(userId);
+        List<Subject> subjects = subjectRepository.findByCreatedById(user.getId());
         if (subjects != null && !subjects.isEmpty()) {
             return subjects.stream()
                     .map(this::entityToDto)
@@ -114,5 +108,10 @@ public class SubjectServiceImpl implements SubjectService
     private Subject dtoToEntity(SubjectDto Dto){
 
         return modelMapper.map(Dto,Subject.class);
+    }
+
+    @Override
+    public Subject findSubjectById(String id){
+        return subjectRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Subject", "id", id));
     }
 }

@@ -1,7 +1,7 @@
 package com.studyForge.Study_Forge;
 
-import com.studyForge.Study_Forge.Repository.SubjectRepository;
-import com.studyForge.Study_Forge.Service.SubjectService;
+import com.studyForge.Study_Forge.Subject.SubjectRepository;
+import com.studyForge.Study_Forge.Subject.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;

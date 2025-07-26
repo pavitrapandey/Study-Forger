@@ -1,9 +1,7 @@
-package com.studyForge.Study_Forge.Controller;
+package com.studyForge.Study_Forge.User;
 
-import com.studyForge.Study_Forge.Dto.ImageResponse;
-import com.studyForge.Study_Forge.Dto.UserDto;
+import com.studyForge.Study_Forge.Files.ImageResponse;
 import com.studyForge.Study_Forge.Service.FileService;
-import com.studyForge.Study_Forge.Service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

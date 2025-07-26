@@ -1,8 +1,5 @@
-package com.studyForge.Study_Forge.Service;
+package com.studyForge.Study_Forge.Topic;
 
-
-import com.studyForge.Study_Forge.Dto.TopicRequestDto;
-import com.studyForge.Study_Forge.Dto.TopicResponseDto;
 
 import java.util.List;
 
@@ -21,4 +18,6 @@ public interface TopicService {
     List<TopicResponseDto> searchTopicByName(String topicName, String subjectId);
     //search topic by difficulty
     List<TopicResponseDto> searchTopicByDifficulty(String difficulty, String subjectId);
+
+    Topic findTopicById(String id);
 }

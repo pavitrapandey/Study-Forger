@@ -1,8 +1,5 @@
-package com.studyForge.Study_Forge.Controller;
+package com.studyForge.Study_Forge.Topic;
 
-import com.studyForge.Study_Forge.Dto.TopicRequestDto;
-import com.studyForge.Study_Forge.Dto.TopicResponseDto;
-import com.studyForge.Study_Forge.Service.TopicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

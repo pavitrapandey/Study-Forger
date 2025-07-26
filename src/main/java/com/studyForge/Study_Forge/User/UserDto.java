@@ -1,6 +1,5 @@
-package com.studyForge.Study_Forge.Dto;
+package com.studyForge.Study_Forge.User;
 
-import jakarta.persistence.Column;
 import lombok.*;
 
 @Getter

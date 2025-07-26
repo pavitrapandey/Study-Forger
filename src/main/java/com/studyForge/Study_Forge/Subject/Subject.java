@@ -1,10 +1,10 @@
-package com.studyForge.Study_Forge.Entity;
+package com.studyForge.Study_Forge.Subject;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.annotation.Nonnull;
+import com.studyForge.Study_Forge.Topic.Topic;
+import com.studyForge.Study_Forge.User.User;
 import jakarta.persistence.*;
 import lombok.*;
-import org.antlr.v4.runtime.misc.NotNull;
 
 import java.util.List;
 

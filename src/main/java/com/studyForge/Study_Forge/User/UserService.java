@@ -1,6 +1,4 @@
-package com.studyForge.Study_Forge.Service;
-
-import com.studyForge.Study_Forge.Dto.UserDto;
+package com.studyForge.Study_Forge.User;
 
 import java.util.List;
 
@@ -22,4 +20,6 @@ public interface UserService {
 
     //get user by email
     UserDto getUserByEmail(String email);
+
+    User findUserById(String userId);
 }

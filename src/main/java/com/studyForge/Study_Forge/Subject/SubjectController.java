@@ -1,7 +1,5 @@
-package com.studyForge.Study_Forge.Controller;
+package com.studyForge.Study_Forge.Subject;
 
-import com.studyForge.Study_Forge.Dto.SubjectDto;
-import com.studyForge.Study_Forge.Service.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

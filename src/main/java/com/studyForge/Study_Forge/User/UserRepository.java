@@ -1,6 +1,5 @@
-package com.studyForge.Study_Forge.Repository;
+package com.studyForge.Study_Forge.User;
 
-import com.studyForge.Study_Forge.Entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
