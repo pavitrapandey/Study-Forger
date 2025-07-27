@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -31,8 +33,8 @@ public class TopicServiceImpl implements TopicService{
     @Autowired
     private ModelMapper modelMapper;
 
-    private static final SimpleDateFormat DATE_FORMAT =
-            new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+    private static final DateTimeFormatter DATE_FORMAT =
+            DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 
     Logger logger = LoggerFactory.getLogger(TopicServiceImpl.class);
 
@@ -47,9 +49,13 @@ public class TopicServiceImpl implements TopicService{
         // Convert DTO to Entity
         Topic topic=Topic.builder().
                 topicName(request.getTopicName())
-                .createdAt(new Date())
-                .updatedAt(new Date())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .description(request.getDescription())
+                .easeFactor(2.5)
+                .repetition(0)
+                .interval(0)
+                .userId(subject.getCreatedBy().getId())
                 .priority(Topic.Priority.valueOf(request.getPriority()))
                 .difficulty(Topic.Difficulty.valueOf(request.getDifficulty()))
                 .build();
@@ -86,7 +92,7 @@ public class TopicServiceImpl implements TopicService{
         topic.setDescription(request.getDescription());
         topic.setPriority(Topic.Priority.valueOf(request.getPriority()));
         topic.setDifficulty(Topic.Difficulty.valueOf(request.getDifficulty()));
-        topic.setUpdatedAt(new Date());
+        topic.setUpdatedAt(LocalDateTime.now());
         topic.setHave_revised(request.isHave_revised());
         // Set the subject
         topic.setSubject(subject);
@@ -184,7 +190,7 @@ public class TopicServiceImpl implements TopicService{
         Topic.Difficulty diff;
         try {
             diff = Topic.Difficulty.valueOf(difficulty.toUpperCase());
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e){
             throw new BadApiRequest("Invalid difficulty! Use EASY, MEDIUM, HARD");
         }
 
@@ -194,7 +200,7 @@ public class TopicServiceImpl implements TopicService{
                     .map(this::entityToDto)
                     .toList();
         }
-        return null;
+        return List.of();
     }
 
 
@@ -209,5 +215,15 @@ public class TopicServiceImpl implements TopicService{
     @Override
     public Topic findTopicById(String id){
         return topicRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Topic", "id", id));
+    }
+
+    @Override
+    public List<Topic> findAll(String id){
+    Subject subject = subjectService.findSubjectById(id);
+    if (subject != null) {
+            return topicRepository.findBySubjectId(id);
+        }
+
+        return List.of();
     }
 }

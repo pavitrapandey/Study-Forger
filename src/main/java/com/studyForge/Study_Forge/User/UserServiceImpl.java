@@ -1,6 +1,7 @@
 package com.studyForge.Study_Forge.User;
 
 import com.studyForge.Study_Forge.Exception.EmailAlreadyExistException;
+import com.studyForge.Study_Forge.Exception.NotFoundException;
 import com.studyForge.Study_Forge.Exception.ResourceNotFoundException;
 import com.studyForge.Study_Forge.Exception.UsernameAlreadyTakenException;
 import org.modelmapper.ModelMapper;
@@ -61,7 +62,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(String userId, UserDto userDto){
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+                .orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
 
         // Check if the email already exists for another user
         Optional<User> existingUser = userRepository.findByEmail(userDto.getEmail());
@@ -90,7 +91,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserById(String userId){
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+                .orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
         // Convert User Entity to UserDto
         return entityToUserDto(user);
     }
@@ -111,7 +112,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(String userId){
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+                .orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
 
         String imageName=user.getImageName();
         String fullPath=filePath+imageName;
@@ -119,8 +120,8 @@ public class UserServiceImpl implements UserService {
         Path path= Path.of(fullPath);
         try {
             Files.delete(path);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new NotFoundException("Error deleting image file: " + e.getMessage());
         }
 
         userRepository.delete(user);
@@ -131,7 +132,7 @@ public class UserServiceImpl implements UserService {
     public UserDto getUserByEmail(String email){
         Optional<User> userOptional = userRepository.findByEmail(email);
     if(userOptional.isEmpty()){
-        throw new RuntimeException("User not found with email: " + email);
+        throw new NotFoundException("User not found with email: " + email);
     }
         User user = userOptional.get();
         // Convert User Entity to UserDto

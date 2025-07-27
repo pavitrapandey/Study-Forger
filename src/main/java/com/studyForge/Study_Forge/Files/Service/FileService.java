@@ -1,4 +1,4 @@
-package com.studyForge.Study_Forge.Service;
+package com.studyForge.Study_Forge.Files.Service;
 
 import org.springframework.web.multipart.MultipartFile;
 

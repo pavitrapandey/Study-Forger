@@ -1,5 +1,7 @@
 package com.studyForge.Study_Forge.Subject;
 
+import com.studyForge.Study_Forge.User.User;
+
 import java.util.List;
 
 public interface SubjectService {
@@ -19,4 +21,5 @@ public interface SubjectService {
     List<SubjectDto> searchSubjectByName(String subjectName, String userId);
 
     Subject findSubjectById(String id);
+
 }

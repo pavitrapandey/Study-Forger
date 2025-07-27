@@ -20,4 +20,5 @@ public interface TopicService {
     List<TopicResponseDto> searchTopicByDifficulty(String difficulty, String subjectId);
 
     Topic findTopicById(String id);
+    List<Topic> findAll(String id);
 }

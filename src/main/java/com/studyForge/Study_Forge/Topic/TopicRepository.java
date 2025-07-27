@@ -11,4 +11,6 @@ public interface TopicRepository extends JpaRepository<Topic, String>{
     List<Topic> findByTopicNameAndSubject(String topicName,Subject subject);
 
     List<Topic> findByDifficultyAndSubject(Topic.Difficulty difficulty,Subject subject);
+
+    List<Topic> findByUserId(String userId);
 }

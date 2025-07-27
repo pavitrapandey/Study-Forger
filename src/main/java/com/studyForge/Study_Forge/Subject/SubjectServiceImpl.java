@@ -1,6 +1,7 @@
 package com.studyForge.Study_Forge.Subject;
 
 import com.studyForge.Study_Forge.Exception.BadApiRequest;
+import com.studyForge.Study_Forge.Exception.NotFoundException;
 import com.studyForge.Study_Forge.Exception.ResourceNotFoundException;
 import com.studyForge.Study_Forge.User.User;
 import com.studyForge.Study_Forge.User.UserService;
@@ -30,6 +31,9 @@ public class SubjectServiceImpl implements SubjectService
 
         // 2. Fetch creator user from DTO's ID
         User user =userService.findUserById(userId);
+        if(user == null){
+            throw new NotFoundException("User not found with id: " + userId);
+        }
 
         // 3. Convert DTO to Entity
         Subject subject = Subject.builder()
@@ -48,7 +52,7 @@ public class SubjectServiceImpl implements SubjectService
 
     @Override
     public SubjectDto updateSubject(String subjectId, SubjectDto subjectDto){
-        Subject subject = subjectRepository.findById(subjectId).orElseThrow(() -> new RuntimeException("Subject not found with id: " + subjectId));
+        Subject subject = subjectRepository.findById(subjectId).orElseThrow(() -> new NotFoundException("Subject not found with id: " + subjectId));
         // Update subject fields
         subject.setSubjectName(subjectDto.getSubjectName());
         subject.setDescription(subjectDto.getDescription());
@@ -58,7 +62,7 @@ public class SubjectServiceImpl implements SubjectService
 
     @Override
     public SubjectDto getSubjectById(String subjectId){
-        Subject subject = subjectRepository.findById(subjectId).orElseThrow(() -> new RuntimeException("Subject not found with id: " + subjectId));
+        Subject subject = subjectRepository.findById(subjectId).orElseThrow(() -> new NotFoundException("Subject not found with id: " + subjectId));
         // Convert Subject entity to SubjectDto
         return entityToDto(subject);
     }
@@ -66,13 +70,17 @@ public class SubjectServiceImpl implements SubjectService
     @Override
     public List<SubjectDto> getAllSubjectsByUserId(String userId){
         User user = userService.findUserById(userId);
+        if(user == null){
+            throw new NotFoundException("User not found with id: " + userId);
+        }
         List<Subject> subjects = subjectRepository.findByCreatedById(user.getId());
         if (subjects != null && !subjects.isEmpty()) {
             return subjects.stream()
                     .map(this::entityToDto)
                     .toList();
         }
-         return null;
+         //return empty list
+        return List.of();
     }
 
     @Override
@@ -114,4 +122,6 @@ public class SubjectServiceImpl implements SubjectService
     public Subject findSubjectById(String id){
         return subjectRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Subject", "id", id));
     }
+
+
 }

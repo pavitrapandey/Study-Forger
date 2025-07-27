@@ -1,0 +1,9 @@
+//user mock data
+
+{
+"username": "pavitra77",
+        "email": "pavitra77@gmail.com",
+        "name": "Pavitra Pandey",
+        "about": "creator",
+        "imageName": "sakuu.png"
+}

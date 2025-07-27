@@ -1,7 +1,7 @@
-package com.studyForge.Study_Forge.Service.ServiceImpl;
+package com.studyForge.Study_Forge.Files.Service.ServiceImpl;
 
 import com.studyForge.Study_Forge.Exception.BadApiRequest;
-import com.studyForge.Study_Forge.Service.FileService;
+import com.studyForge.Study_Forge.Files.Service.FileService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

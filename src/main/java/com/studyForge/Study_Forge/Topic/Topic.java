@@ -1,10 +1,14 @@
 package com.studyForge.Study_Forge.Topic;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.studyForge.Study_Forge.Revision.Revision;
 import com.studyForge.Study_Forge.Subject.Subject;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -23,10 +27,12 @@ public class Topic{
     @Column(nullable = false)
     private String description;
 
+    private String userId;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
-    private Date createdAt; // track when the topic was created
+    private LocalDateTime createdAt; // track when the topic was created
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
-    private Date updatedAt; // track last updated
+    private LocalDateTime updatedAt; // track last updated
 
 
     private boolean isCompleted; // flag to indicate if the topic is completed or not
@@ -51,5 +57,17 @@ public class Topic{
     @JoinColumn(name = "subject_id", nullable = false)
     private Subject subject; // Assuming this is a foreign key to the Subject entity
 
-    // Additional fields can be added as needed
+    @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore // prevents infinite recursion in response serialization
+    private List<Revision> revisions; // list of revisions for this topic>
+
+    // Sm-2 Fields
+    double easeFactor; //default 2.5
+    int repetition;    // default 0
+
+    @Column(name = "interval_days")
+    int interval;      // default 0
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+    private LocalDateTime lastReviewDate; // track last review date, default today;Date lastReviewDate; // track last review date, default today;
+    private LocalDateTime nextReviewDate; // track the latest review date, default today;Date newestReviewDate; // track the latest review date, default today;
 }
