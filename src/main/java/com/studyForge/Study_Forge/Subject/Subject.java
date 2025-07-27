@@ -1,6 +1,7 @@
 package com.studyForge.Study_Forge.Subject;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.studyForge.Study_Forge.Topic.Topic;
 import com.studyForge.Study_Forge.User.User;
 import jakarta.persistence.*;
@@ -15,6 +16,8 @@ import java.util.List;
 @Builder
 @Table(name = "subjects")
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+
 public class Subject{
 
     @Id

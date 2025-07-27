@@ -4,6 +4,9 @@ import com.studyForge.Study_Forge.Exception.InvalidInputException;
 import com.studyForge.Study_Forge.Exception.NotFoundException;
 import com.studyForge.Study_Forge.Topic.Topic;
 import com.studyForge.Study_Forge.Topic.TopicRepository;
+import com.studyForge.Study_Forge.Topic.TopicResponseDto;
+import jakarta.transaction.Transactional;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -21,13 +24,16 @@ public class RevisionServiceImpl implements RevisionService{
     @Autowired
     private TopicRepository topicRepository;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     @Override
+    @Transactional
     public RevisionResponseDto reviewTopic(String topicId, int qualityScore){
         Topic topic = topicRepository.findById(topicId)
                 .orElseThrow(()->new NotFoundException("Topic doesn't exist please check the input: " + topicId));
         // Validate quality score
         if (qualityScore < 0 || qualityScore > 5) {
-            System.out.println(HttpStatus.BAD_REQUEST);
             throw new InvalidInputException("Quality score must be between 0 and 5");
         }
         //SM-2 Algorithm
@@ -35,7 +41,7 @@ public class RevisionServiceImpl implements RevisionService{
         int interval = topic.getInterval();
         int repetition = topic.getRepetition();
 
-       //switchCase for difficulty level
+        //switchCase for difficulty level
         switch (topic.getDifficulty()) {
             case EASY:
                 easinessFactor += 0.1;
@@ -67,7 +73,7 @@ public class RevisionServiceImpl implements RevisionService{
             interval = 1;
             // EF unchanged
         }
-        LocalDateTime now= LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
         LocalDateTime nextReviewDate = now.plusDays(interval);
 
         Revision revision = Revision.builder()
@@ -88,7 +94,7 @@ public class RevisionServiceImpl implements RevisionService{
         topic.setInterval(interval);
         topic.setLastReviewDate(now);
         topic.setNextReviewDate(nextReviewDate);
-        topic.setUpdatedAt(nextReviewDate);
+        topic.setUpdatedAt(now); // Fixed: updatedAt should be the current time of the update
         topic.setHave_revised(true);
 
         // Save the updated topic
@@ -99,15 +105,15 @@ public class RevisionServiceImpl implements RevisionService{
                 .easeFactor(easinessFactor)
                 .repetition(repetition)
                 .interval(interval)
-                .lastReviewDate(LocalDateTime.now())
-                .nextReviewDate(LocalDateTime.now().plusDays(interval))
+                .lastReviewDate(now)
+                .nextReviewDate(nextReviewDate)
                 .topic(topic.getTopicName())
                 .lastQualityScore(qualityScore)
                 .build();
     }
 
     @Override
-    public List<Topic> dueTopics(String userId) {
+    public List<TopicResponseDto> dueTopics(String userId) {
 
         if (userId == null || userId.isEmpty()) {
             throw new NotFoundException("User ID cannot be null or empty");
@@ -115,13 +121,18 @@ public class RevisionServiceImpl implements RevisionService{
 
         List<Topic> topics= topicRepository.findByUserId(userId);
         // Check if user exists
-        if (!topics.isEmpty()) {
-            return topics.stream()
-                    .filter(t -> t.getLastReviewDate() != null &&
-                            t.getLastReviewDate().plusDays(t.getInterval()).isBefore(LocalDateTime.now()))
+        if (topics == null || topics.isEmpty()) {
+            throw new NotFoundException("No topics found for user with ID: " + userId);
+        }
+        // Filter topics that are due for review
+
+        List<Topic> todayTopics=topicRepository.findDueTopicsForUser(userId, LocalDateTime.now());
+        if(!todayTopics.isEmpty()) {
+            return todayTopics.stream()
+                    .map(topic -> modelMapper.map(topic, TopicResponseDto.class))
                     .collect(Collectors.toList());
-             }
-        //Set Today
-        return List.of();
+        } else {
+            throw new NotFoundException("No due topics found for user with ID: " + userId);
+        }
     }
 }

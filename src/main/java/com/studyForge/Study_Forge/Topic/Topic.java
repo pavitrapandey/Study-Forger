@@ -1,8 +1,10 @@
 package com.studyForge.Study_Forge.Topic;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.studyForge.Study_Forge.Revision.Revision;
 import com.studyForge.Study_Forge.Subject.Subject;
+import com.studyForge.Study_Forge.User.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,6 +19,8 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "topics")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+
 public class Topic{
 
     @Id
@@ -27,7 +31,9 @@ public class Topic{
     @Column(nullable = false)
     private String description;
 
-    private String userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime createdAt; // track when the topic was created

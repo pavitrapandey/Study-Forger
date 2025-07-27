@@ -2,7 +2,9 @@ package com.studyForge.Study_Forge.User;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.studyForge.Study_Forge.Subject.Subject;
+import com.studyForge.Study_Forge.Topic.Topic;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,6 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User {
     @Id
     private String id;
@@ -30,4 +33,12 @@ public class User {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "createdBy", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore // prevents infinite recursion in response serialization
-    private List<Subject> subjects;}
+    private List<Subject> subjects;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true) // prevents infinite recursion in response serialization
+    @JsonIgnore
+    private List<Topic> topics;
+
+}
+
+

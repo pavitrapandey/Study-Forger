@@ -19,8 +19,9 @@ public class RevisionResponseDto
     private int interval;
     private int lastQualityScore;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/ HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy hh:mm:ss a")
     private LocalDateTime lastReviewDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy hh:mm:ss a")
     private LocalDateTime nextReviewDate;
 
     @Override

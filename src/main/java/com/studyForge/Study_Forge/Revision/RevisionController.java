@@ -1,6 +1,7 @@
 package com.studyForge.Study_Forge.Revision;
 
 import com.studyForge.Study_Forge.Topic.Topic;
+import com.studyForge.Study_Forge.Topic.TopicResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +23,8 @@ public class RevisionController {
     }
 
     @GetMapping("due/{userId}")
-    public ResponseEntity<List<Topic>> getDueTopics(@PathVariable String userId) {
-        List<Topic> dueTopics = revisionService.dueTopics(userId);
+    public ResponseEntity<List<TopicResponseDto>> getDueTopics(@PathVariable String userId) {
+        List<TopicResponseDto> dueTopics = revisionService.dueTopics(userId);
         return new ResponseEntity<>(dueTopics, HttpStatus.OK);
     }
 

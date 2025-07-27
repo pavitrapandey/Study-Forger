@@ -55,7 +55,7 @@ public class TopicServiceImpl implements TopicService{
                 .easeFactor(2.5)
                 .repetition(0)
                 .interval(0)
-                .userId(subject.getCreatedBy().getId())
+                .user(subject.getCreatedBy())
                 .priority(Topic.Priority.valueOf(request.getPriority()))
                 .difficulty(Topic.Difficulty.valueOf(request.getDifficulty()))
                 .build();
