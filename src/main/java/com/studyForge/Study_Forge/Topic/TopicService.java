@@ -1,6 +1,8 @@
 package com.studyForge.Study_Forge.Topic;
 
 
+import com.studyForge.Study_Forge.Dto.PageableRespond;
+
 import java.util.List;
 
 public interface TopicService {
@@ -11,13 +13,13 @@ public interface TopicService {
     //get by id
     TopicResponseDto getTopicById(String topicId,String subjectId);
     //get all topics by subject id
-    List<TopicResponseDto> getAllTopicsBySubjectId(String subjectId);
+    PageableRespond<TopicResponseDto> getAllTopicsBySubjectId(String subjectId,int size,int number,String sortBy,String sortDir);
     //delete topic by id
     void deleteTopic(String topicId, String subjectId);
     //search topic by name
-    List<TopicResponseDto> searchTopicByName(String topicName, String subjectId);
+    PageableRespond<TopicResponseDto> searchTopicByName(String topicName, String subjectId,int size,int number,String sortBy,String sortDir);
     //search topic by difficulty
-    List<TopicResponseDto> searchTopicByDifficulty(String difficulty, String subjectId);
+    PageableRespond<TopicResponseDto> searchTopicByDifficulty(String difficulty, String subjectId,int size,int number,String sortBy,String sortDir);
 
     Topic findTopicById(String id);
     List<Topic> findAll(String id);

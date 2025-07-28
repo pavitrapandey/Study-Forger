@@ -1,5 +1,6 @@
 package com.studyForge.Study_Forge.User;
 
+import com.studyForge.Study_Forge.Dto.PageableRespond;
 import com.studyForge.Study_Forge.Files.ImageResponse;
 import com.studyForge.Study_Forge.Files.Service.FileService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -45,8 +46,13 @@ public class UserController{
     }
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAllUsers() {
-        List<UserDto> usersDto = userService.getAllUsers();
+    public ResponseEntity<PageableRespond<UserDto>> getAllUsers(
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = "name", required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir
+    ) {
+        PageableRespond<UserDto> usersDto = userService.getAllUsers(pageNumber, pageSize, sortBy, sortDir);
         return new ResponseEntity<>(usersDto, HttpStatus.OK);
     }
 

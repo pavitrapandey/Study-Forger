@@ -1,5 +1,6 @@
 package com.studyForge.Study_Forge.Revision;
 
+import com.studyForge.Study_Forge.Dto.PageableRespond;
 import com.studyForge.Study_Forge.Topic.Topic;
 import com.studyForge.Study_Forge.Topic.TopicResponseDto;
 
@@ -11,6 +12,6 @@ public interface RevisionService{
     RevisionResponseDto reviewTopic(String topicId, int qualityScore);
 
     //get all topics using the today date
-    List<TopicResponseDto> dueTopics(String userId);
+    PageableRespond<TopicResponseDto> dueTopics(String userId, int pageNumber, int pageSize, String sortBy, String sortDir);
 
 }

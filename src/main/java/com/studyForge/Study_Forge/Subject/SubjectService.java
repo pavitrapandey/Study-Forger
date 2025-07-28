@@ -1,8 +1,6 @@
 package com.studyForge.Study_Forge.Subject;
 
-import com.studyForge.Study_Forge.User.User;
-
-import java.util.List;
+import com.studyForge.Study_Forge.Dto.PageableRespond;
 
 public interface SubjectService {
     // Method to create a new subject
@@ -12,13 +10,14 @@ public interface SubjectService {
     // Method to get a subject by its ID
     SubjectDto getSubjectById(String subjectId);
     // Method to get all subjects of User
-    List<SubjectDto> getAllSubjectsByUserId(String userId);
+    PageableRespond<SubjectDto> getAllSubjectsByUserId(String userId, int page, int size,
+                                                       String sortBy, String sortDir);
 
     // Method to delete a subject by its ID
     void deleteSubject(String subjectId);
 
     //Search subject by name
-    List<SubjectDto> searchSubjectByName(String subjectName, String userId);
+    PageableRespond<SubjectDto> searchSubjectByName(String subjectName, String userId, int page, int size,String sortBy, String sortDir);
 
     Subject findSubjectById(String id);
 

@@ -1,12 +1,18 @@
 package com.studyForge.Study_Forge.Subject;
 
+import com.studyForge.Study_Forge.Dto.PageableRespond;
 import com.studyForge.Study_Forge.Exception.BadApiRequest;
 import com.studyForge.Study_Forge.Exception.NotFoundException;
 import com.studyForge.Study_Forge.Exception.ResourceNotFoundException;
+import com.studyForge.Study_Forge.Helper.helper;
 import com.studyForge.Study_Forge.User.User;
 import com.studyForge.Study_Forge.User.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -68,19 +74,27 @@ public class SubjectServiceImpl implements SubjectService
     }
 
     @Override
-    public List<SubjectDto> getAllSubjectsByUserId(String userId){
+    public PageableRespond<SubjectDto> getAllSubjectsByUserId(String userId, int pageNumber, int pageSize,String sortBy, String sortDir) {
+        Sort sort=(sortDir.equalsIgnoreCase("desc"))?(Sort.by(sortBy).descending()) :(Sort.by(sortBy).ascending()) ;
+        Pageable pageable= PageRequest.of(pageNumber, pageSize, sort);
+
+
+
         User user = userService.findUserById(userId);
         if(user == null){
             throw new NotFoundException("User not found with id: " + userId);
         }
-        List<Subject> subjects = subjectRepository.findByCreatedById(user.getId());
-        if (subjects != null && !subjects.isEmpty()) {
-            return subjects.stream()
+        Page<Subject> subjects = subjectRepository.findByCreatedById(userId,pageable);
+         if (subjects != null && !subjects.isEmpty()) {
+            List<SubjectDto> dtos= subjects.stream()
                     .map(this::entityToDto)
                     .toList();
         }
          //return empty list
-        return List.of();
+       if(subjects==null||subjects.isEmpty()){
+           throw new NotFoundException("Subject not found for user: " + userId);
+         }
+        return helper.getPageableResponse(subjects, SubjectDto.class);
     }
 
     @Override
@@ -91,18 +105,25 @@ public class SubjectServiceImpl implements SubjectService
     }
 
     @Override
-    public List<SubjectDto> searchSubjectByName(String subjectName, String userId) {
-        //Multiple users can have the same subject, so we don't need to check if the user is the creator
-        // of the subject.
-        //However, we can check if the subject exists for the user.
+    public PageableRespond<SubjectDto> searchSubjectByName(String subjectName, String userId,int pageNumber, int pageSize,String sortBy, String sortDir) {
 
-        List<Subject> subjects = subjectRepository.findBySubjectNameAndCreatedById(subjectName, userId);
-        if (subjects != null && !subjects.isEmpty()){
-            return subjects.stream()
+        Sort sort=(sortDir.equalsIgnoreCase("desc"))?(Sort.by(sortBy).descending()) :(Sort.by(sortBy).ascending()) ;
+        Pageable pageable= PageRequest.of(pageNumber, pageSize, sort);
+        User user = userService.findUserById(userId);
+        if(user == null){
+            throw new NotFoundException("User not found with id: " + userId);
+        }
+
+        Page<Subject> subjects = subjectRepository.findBySubjectNameAndCreatedById(subjectName, userId,pageable);
+        if (subjects == null || subjects.isEmpty()) {
+            throw new NotFoundException("No subjects found with name: " + subjectName + " for user: " + userId);
+        }
+
+            List<SubjectDto> dtos= subjects.stream()
                     .map(this::entityToDto)
                     .toList();
-        }
-        return null;
+
+        return helper.getPageableResponse(subjects, SubjectDto.class);
     }
 
     // Helper methods to convert between User and UserDto
@@ -122,6 +143,7 @@ public class SubjectServiceImpl implements SubjectService
     public Subject findSubjectById(String id){
         return subjectRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Subject", "id", id));
     }
+
 
 
 }

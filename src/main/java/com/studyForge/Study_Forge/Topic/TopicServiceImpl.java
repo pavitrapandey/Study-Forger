@@ -1,6 +1,8 @@
 package com.studyForge.Study_Forge.Topic;
 
+import com.studyForge.Study_Forge.Dto.PageableRespond;
 import com.studyForge.Study_Forge.Exception.ResourceNotFoundException;
+import com.studyForge.Study_Forge.Helper.helper;
 import com.studyForge.Study_Forge.Subject.Subject;
 import com.studyForge.Study_Forge.Exception.BadApiRequest;
 import com.studyForge.Study_Forge.Exception.NotFoundException;
@@ -10,12 +12,14 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 
 
@@ -55,7 +59,6 @@ public class TopicServiceImpl implements TopicService{
                 .easeFactor(2.5)
                 .repetition(0)
                 .interval(0)
-                .user(subject.getCreatedBy())
                 .priority(Topic.Priority.valueOf(request.getPriority()))
                 .difficulty(Topic.Difficulty.valueOf(request.getDifficulty()))
                 .build();
@@ -123,20 +126,27 @@ public class TopicServiceImpl implements TopicService{
     }
 
     @Override
-    public List<TopicResponseDto> getAllTopicsBySubjectId(String subjectId){
+    public PageableRespond<TopicResponseDto> getAllTopicsBySubjectId(String subjectId,int page, int size, String sortBy, String sortDir){
+        if (page < 0 || size <= 0) {
+            throw new BadApiRequest("Page number and size must be greater than zero");
+        }
+        Sort sort = (sortDir.equalsIgnoreCase("desc")) ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable= PageRequest.of(page, size, sort);
         Subject subject=  subjectService.findSubjectById(subjectId);
         if(subject==null){
             logger.info("Subject not found!! Kindly add the subject or Check your Input");
             throw new NotFoundException("Subject not found!! Kindly add the subject or Check your Input");
         }
-        List<Topic> topics=topicRepository.findBySubjectId(subjectId);
+        Page<Topic> topics=topicRepository.findBySubjectId(subjectId, pageable);
         if(topics.isEmpty()){
             throw new NotFoundException("No topics found");
         }else{
-           return  topics.stream()
+           List<TopicResponseDto> dto= topics.stream()
                    .map(this::entityToDto)
                    .toList();
         }
+
+        return helper.getPageableResponse(topics, TopicResponseDto.class);
     }
 
     @Override
@@ -164,29 +174,43 @@ public class TopicServiceImpl implements TopicService{
     }
 
     @Override
-    public List<TopicResponseDto> searchTopicByName(String topicName, String subjectId){
+    public PageableRespond<TopicResponseDto> searchTopicByName(String topicName, String subjectId,int page, int size, String sortBy, String sortDir){
+        if (topicName == null || topicName.isEmpty()) {
+            throw new BadApiRequest("Topic name cannot be null or empty");
+        }
+        if (subjectId == null || subjectId.isEmpty()) {
+            throw new BadApiRequest("Subject ID cannot be null or empty");
+        }
+        Sort sort = (sortDir.equalsIgnoreCase("desc")) ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable= PageRequest.of(page, size, sort);
+        //check that subject exist or not
         Subject subject=  subjectService.findSubjectById(subjectId);
         if(subject==null){
-            logger.info("Subject not found!! Kindly add the subject or Check your Input");
+            logger.info("Subject not found!! Kindly add the subject or Check your Input!!!");
             throw new NotFoundException("Subject not found!! Kindly add the subject or Check your Input");
         }
         //check that subject have this topic or not
-        List<Topic> topics=topicRepository.findByTopicNameAndSubject(topicName,subject);
-        if (!topics.isEmpty()){
-            return topics.stream()
+        Page<Topic> topics=topicRepository.findByTopicNameAndSubject(topicName,subject,pageable);
+        if(topics.isEmpty()){
+            throw new NotFoundException("No topics found");
+        }else{
+            List<TopicResponseDto> dto= topics.stream()
                     .map(this::entityToDto)
                     .toList();
         }
-        return null;
+
+        return helper.getPageableResponse(topics, TopicResponseDto.class);
     }
 
     @Override
-    public List<TopicResponseDto> searchTopicByDifficulty(String difficulty, String subjectId){
+    public PageableRespond<TopicResponseDto> searchTopicByDifficulty(String difficulty, String subjectId,int page, int size, String sortBy, String sortDir){
         Subject subject=  subjectService.findSubjectById(subjectId);
         if(subject==null){
             logger.info("Subject not found!! Kindly add the subject or Check your Input");
             throw new NotFoundException("Subject not found!! Kindly add the subject or Check your Input");
         }
+        Sort sort = (sortDir.equalsIgnoreCase("desc")) ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable= PageRequest.of(page, size, sort);
         Topic.Difficulty diff;
         try {
             diff = Topic.Difficulty.valueOf(difficulty.toUpperCase());
@@ -194,13 +218,13 @@ public class TopicServiceImpl implements TopicService{
             throw new BadApiRequest("Invalid difficulty! Use EASY, MEDIUM, HARD");
         }
 
-        List<Topic> topics=topicRepository.findByDifficultyAndSubject(diff,subject);
+        Page<Topic> topics=topicRepository.findByDifficultyAndSubject(diff,subject,pageable);
         if (!topics.isEmpty()){
-            return topics.stream()
+            List<TopicResponseDto> dtos= topics.stream()
                     .map(this::entityToDto)
                     .toList();
         }
-        return List.of();
+        return helper.getPageableResponse(topics, TopicResponseDto.class);
     }
 
 
@@ -221,9 +245,10 @@ public class TopicServiceImpl implements TopicService{
     public List<Topic> findAll(String id){
     Subject subject = subjectService.findSubjectById(id);
     if (subject != null) {
-            return topicRepository.findBySubjectId(id);
+            return topicRepository.findBySubject(subject);
         }
+    logger.info("No topics found for subject with ID: " + id);
+    throw new NotFoundException("No topics found for subject with ID: " + id);
 
-        return List.of();
     }
 }

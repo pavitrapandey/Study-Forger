@@ -1,5 +1,6 @@
 package com.studyForge.Study_Forge.Subject;
 
+import com.studyForge.Study_Forge.Dto.PageableRespond;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,8 +48,14 @@ public class SubjectController {
     }
 
     @GetMapping
-    public ResponseEntity<List<SubjectDto>> getAllSubjectsByUserId(@PathVariable String user_id) {
-        List<SubjectDto> subjects = subjectService.getAllSubjectsByUserId(user_id);
+    public ResponseEntity<PageableRespond<SubjectDto>> getAllSubjectsByUserId(
+            @PathVariable String user_id,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(defaultValue = "subjectName") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir
+    ) {
+        PageableRespond<SubjectDto> subjects = subjectService.getAllSubjectsByUserId(user_id, pageNumber, pageSize, sortBy, sortDir);
         return new ResponseEntity<>(subjects, HttpStatus.OK);
     }
 
@@ -65,11 +72,16 @@ public class SubjectController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<SubjectDto> > searchSubjectByName(@RequestParam String subjectName
-                                                            , @PathVariable("user_id") String userId
+    public ResponseEntity<PageableRespond<SubjectDto>> searchSubjectByName(
+            @RequestParam String subjectName,
+            @PathVariable("user_id") String userId,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(defaultValue = "subjectName") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir
     ) {
 
-        List<SubjectDto> subjects = subjectService.searchSubjectByName(subjectName, userId);
+        PageableRespond<SubjectDto> subjects = subjectService.searchSubjectByName(subjectName, userId, pageNumber, pageSize, sortBy, sortDir);
         return new ResponseEntity<>(subjects, HttpStatus.OK);
     }
 }

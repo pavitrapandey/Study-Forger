@@ -35,9 +35,6 @@ public class User {
     @JsonIgnore // prevents infinite recursion in response serialization
     private List<Subject> subjects;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true) // prevents infinite recursion in response serialization
-    @JsonIgnore
-    private List<Topic> topics;
 
 }
 

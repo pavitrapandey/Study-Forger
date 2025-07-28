@@ -1,5 +1,7 @@
 package com.studyForge.Study_Forge.User;
 
+import com.studyForge.Study_Forge.Dto.PageableRespond;
+
 import java.util.List;
 
 public interface UserService {
@@ -13,7 +15,7 @@ public interface UserService {
     UserDto getUserById(String userId);
 
     //get user all Users
-    List<UserDto> getAllUsers();
+    PageableRespond<UserDto> getAllUsers(int pageNumber, int pageSize, String sortBy, String sortDir);
 
     //delete user by id
     void deleteUser(String userId);

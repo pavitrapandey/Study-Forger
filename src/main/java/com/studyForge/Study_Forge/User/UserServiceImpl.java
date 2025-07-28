@@ -1,12 +1,18 @@
 package com.studyForge.Study_Forge.User;
 
+import com.studyForge.Study_Forge.Dto.PageableRespond;
 import com.studyForge.Study_Forge.Exception.EmailAlreadyExistException;
 import com.studyForge.Study_Forge.Exception.NotFoundException;
 import com.studyForge.Study_Forge.Exception.ResourceNotFoundException;
 import com.studyForge.Study_Forge.Exception.UsernameAlreadyTakenException;
+import com.studyForge.Study_Forge.Helper.helper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -97,16 +103,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getAllUsers(){
-        List<User> users = userRepository.findAll();
-        if (!users.isEmpty()) {
+    public PageableRespond<UserDto> getAllUsers(int pageNumber, int pageSize, String sortBy, String sortDir){
+        // Create a sort object based on the provided sort direction
+        Sort sort=(sortDir.equalsIgnoreCase("desc"))?(Sort.by(sortBy).descending()) :(Sort.by(sortBy).ascending()) ;
+        Pageable pageable= PageRequest.of(pageNumber, pageSize, sort);
+
+        // Create a pageable object with the specified page number and size
+        Page<User> page = userRepository.findAll(pageable);
+
+        // Fetch all users from the repository
+        List<User> users= page.getContent();
             // Convert List<User> to List<UserDto>
-            return users.stream()
+            List<UserDto> dto= users.stream()
                     .map(this::entityToUserDto)
                     .toList();
-        }
+
         // Return an empty list if no users are found
-        return List.of();
+        return helper.getPageableResponse(page,UserDto.class);
     }
 
     @Override

@@ -1,20 +1,24 @@
 package com.studyForge.Study_Forge.Revision;
 
+import com.studyForge.Study_Forge.Dto.PageableRespond;
 import com.studyForge.Study_Forge.Exception.InvalidInputException;
 import com.studyForge.Study_Forge.Exception.NotFoundException;
+import com.studyForge.Study_Forge.Helper.helper;
 import com.studyForge.Study_Forge.Topic.Topic;
 import com.studyForge.Study_Forge.Topic.TopicRepository;
 import com.studyForge.Study_Forge.Topic.TopicResponseDto;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class RevisionServiceImpl implements RevisionService{
@@ -113,26 +117,32 @@ public class RevisionServiceImpl implements RevisionService{
     }
 
     @Override
-    public List<TopicResponseDto> dueTopics(String userId) {
+    public PageableRespond<TopicResponseDto> dueTopics(String userId, int pageNumber, int pageSize, String sortBy, String sortDir) {
 
         if (userId == null || userId.isEmpty()) {
             throw new NotFoundException("User ID cannot be null or empty");
         }
 
-        List<Topic> topics= topicRepository.findByUserId(userId);
-        // Check if user exists
+        Sort sort = (sortDir.equalsIgnoreCase("desc")) ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+
+        Page<Topic> topics = topicRepository.findByUserId(userId,pageable);
+
         if (topics == null || topics.isEmpty()) {
             throw new NotFoundException("No topics found for user with ID: " + userId);
         }
-        // Filter topics that are due for review
+        LocalDateTime today = LocalDateTime.now();
+        List<Topic> dueTopics = topics.stream()
+                .filter(topic -> topic.getNextReviewDate() != null && topic.getNextReviewDate().isBefore(today))
+                .toList();
 
-        List<Topic> todayTopics=topicRepository.findDueTopicsForUser(userId, LocalDateTime.now());
-        if(!todayTopics.isEmpty()) {
-            return todayTopics.stream()
-                    .map(topic -> modelMapper.map(topic, TopicResponseDto.class))
-                    .collect(Collectors.toList());
-        } else {
+        if (dueTopics.isEmpty()) {
             throw new NotFoundException("No due topics found for user with ID: " + userId);
         }
+        List<TopicResponseDto> allDueTopics= dueTopics.stream()
+                .map(topic -> modelMapper.map(topic, TopicResponseDto.class))
+                .toList();
+
+        return helper.getPageableResponse(topics, TopicResponseDto.class);
     }
 }

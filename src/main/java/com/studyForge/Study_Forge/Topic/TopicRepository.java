@@ -1,22 +1,27 @@
 package com.studyForge.Study_Forge.Topic;
 
 import com.studyForge.Study_Forge.Subject.Subject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface TopicRepository extends JpaRepository<Topic, String>{
-    List<Topic> findBySubjectId(String subjectId);
+    Page<Topic> findBySubjectId(String subjectId, Pageable pageable);
 
-    List<Topic> findByTopicNameAndSubject(String topicName,Subject subject);
+    List<Topic> findBySubject(Subject subject);
 
-    List<Topic> findByDifficultyAndSubject(Topic.Difficulty difficulty,Subject subject);
+    Page<Topic> findByTopicNameAndSubject(String topicName, Subject subject, Pageable pageable);
 
-    List<Topic> findByUserId(String userId);
+    Page<Topic> findByDifficultyAndSubject(Topic.Difficulty difficulty,Subject subject, Pageable pageable);
 
-    @Query("SELECT t FROM Topic t LEFT JOIN FETCH t.user WHERE t.user.id = :userId AND t.nextReviewDate <= :currentDate")
-    List<Topic> findDueTopicsForUser(@Param("userId") String userId, @Param("currentDate") LocalDateTime currentDate);
+
+    @Query("SELECT t FROM Topic t WHERE t.subject.createdBy.id = :userId")
+    Page<Topic> findByUserId(@Param("userId") String userId,
+                             Pageable pageable);
+
+
 }
