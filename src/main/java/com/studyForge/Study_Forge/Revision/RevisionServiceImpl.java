@@ -87,6 +87,7 @@ public class RevisionServiceImpl implements RevisionService{
                 .interval(interval)
                 .easeFactor(easinessFactor)
                 .lastReviewDate(now)
+                .qualityScore(qualityScore)
                 .nextReviewDate(nextReviewDate)
                 .build();
         // Save the revision
@@ -98,9 +99,22 @@ public class RevisionServiceImpl implements RevisionService{
         topic.setInterval(interval);
         topic.setLastReviewDate(now);
         topic.setNextReviewDate(nextReviewDate);
-        topic.setUpdatedAt(now); // Fixed: updatedAt should be the current time of the update
+        topic.setUpdatedAt(now); // updatedAt should be the current time of the update
         topic.setHave_revised(true);
 
+        List<Revision> lastRevisions = revisionRepository.findTop2ByTopicIdOrderByLastReviewDateDesc(topicId);
+
+        boolean twoPerfect = lastRevisions.size() == 2 &&
+                lastRevisions.get(0).getQualityScore() == 5 &&
+                lastRevisions.get(1).getQualityScore() == 5;
+
+        if (twoPerfect) {
+            topic.setCompleted(true);
+            topic.setNextReviewDate(null); // Optional: stop further reviews
+        }
+
+        // Save the updated topic
+        topicRepository.save(topic);
         // Save the updated topic
         topicRepository.save(topic);
 

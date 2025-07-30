@@ -28,7 +28,7 @@ public class Topic{
     private String id;
     @Column(nullable = false)
     private String topicName;
-    @Column(nullable = false)
+
     private String description;
 
 

@@ -21,7 +21,7 @@ public class Revision{
     @Column(name = "interval_days")
     private int interval;
     private int repetition;
-    private int dueDate; // Unix timestamp for the due date
+    private int qualityScore;
 
 
     private LocalDateTime lastReviewDate; // Unix timestamp for the last review date

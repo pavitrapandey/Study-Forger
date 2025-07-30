@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface RevisionRepository extends JpaRepository<Revision, String>{
     List<Revision> findByNextReviewDateBefore(LocalDateTime date);
+
+    List<Revision> findTop2ByTopicIdOrderByLastReviewDateDesc(String topicId);
 }

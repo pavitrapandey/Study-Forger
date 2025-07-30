@@ -1,6 +1,9 @@
 package com.studyForge.Study_Forge.User;
 
+import com.studyForge.Study_Forge.Role.RoleDto;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,4 +19,5 @@ public class UserDto {
     private String password;
     private String about;
     private String imageName;
+    private List<RoleDto> roles;
 }

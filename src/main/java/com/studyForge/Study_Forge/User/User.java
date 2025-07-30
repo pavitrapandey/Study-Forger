@@ -3,11 +3,13 @@ package com.studyForge.Study_Forge.User;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.studyForge.Study_Forge.Role.Role;
 import com.studyForge.Study_Forge.Subject.Subject;
 import com.studyForge.Study_Forge.Topic.Topic;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -35,7 +37,8 @@ public class User {
     @JsonIgnore // prevents infinite recursion in response serialization
     private List<Subject> subjects;
 
-
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Role> roles=new ArrayList<>();
 }
 
 

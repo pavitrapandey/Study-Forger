@@ -36,28 +36,28 @@ public class StudyForgeApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		//set all topic's revision properties default
-		topicRepository.findAll().forEach(topic -> {
-			topic.setRepetition(0);
-			topic.setInterval(0);
-			topic.setEaseFactor(2.5);
-			topic.setUpdatedAt(topic.getCreatedAt());
-			topic.setNextReviewDate(topic.getCreatedAt());
-			topic.setHave_revised(false);
-			topicRepository.save(topic);
-		});
-		//add all topics to revision table
-		topicRepository.findAll().forEach(topic -> {
-			Revision revision = Revision.builder()
-					.id(UUID.randomUUID().toString())
-					.topic(topic)
-					.repetition(1)
-					.interval(1)
-					.easeFactor(2.5)
-					.lastReviewDate(topic.getCreatedAt())
-					.nextReviewDate(topic.getCreatedAt().plusDays(1))
-					.build();
-			revisionRepository.save(revision);
-		});
+//		//set all topic's revision properties default
+//		topicRepository.findAll().forEach(topic -> {
+//			topic.setRepetition(0);
+//			topic.setInterval(0);
+//			topic.setEaseFactor(2.5);
+//			topic.setUpdatedAt(topic.getCreatedAt());
+//			topic.setNextReviewDate(topic.getCreatedAt());
+//			topic.setHave_revised(false);
+//			topicRepository.save(topic);
+//		});
+//		//add all topics to revision table
+//		topicRepository.findAll().forEach(topic -> {
+//			Revision revision = Revision.builder()
+//					.id(UUID.randomUUID().toString())
+//					.topic(topic)
+//					.repetition(1)
+//					.interval(1)
+//					.easeFactor(2.5)
+//					.lastReviewDate(topic.getCreatedAt())
+//					.nextReviewDate(topic.getCreatedAt().plusDays(1))
+//					.build();
+//			revisionRepository.save(revision);
+//		});
 	}
 }
