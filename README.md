@@ -98,10 +98,10 @@
 ## 📂 Project Structure
 
 ```
-Study-Forge/
+Study-Forger/
 ├── 📁 src/
 │   ├── 📁 main/
-│   │   ├── 📁 java/com/studyForge/Study_Forge/
+│   │   ├── 📁 java/com/studyForger/Study_Forger/
 │   │   │   ├── 📁 Configuration/          # Spring Boot configurations
 │   │   │   ├── 📁 Controller/             # REST API controllers
 │   │   │   ├── 📁 Dto/                    # Data Transfer Objects
@@ -132,18 +132,18 @@ Study-Forge/
 │   │   │   │   ├── UserDto.java
 │   │   │   │   ├── UserRepository.java
 │   │   │   │   └── UserService.java
-│   │   │   └── StudyForgeApplication.java # Main application class
+│   │   │   └── StudyForgerApplication.java # Main application class
 │   │   └── 📁 resources/
 │   │       ├── 📁 static/                 # Static web resources
 │   │       ├── 📁 templates/              # Template files
 │   │       └── application.properties     # Application configuration
 │   └── 📁 test/
-│       └── 📁 java/com/studyForge/Study_Forge/
+│       └── 📁 java/com/studyForger/Study_Forger/
 │           ├── 📁 RevisionTest/           # Revision module tests
 │           ├── 📁 SubjectTest/            # Subject module tests
 │           ├── 📁 TopicTest/              # Topic module tests
 │           ├── 📁 UserTest/               # User module tests
-│           └── StudyForgeApplicationTests.java
+│           └── StudyForgerApplicationTests.java
 ├── 📁 .mvn/                              # Maven wrapper files
 ├── 📁 images/                            # Project documentation images
 ├── 📁 target/                            # Compiled classes and build artifacts
