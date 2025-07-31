@@ -1,6 +1,17 @@
-# 📚 Study Forge – Smart Study Scheduler
+# 📚 Study Forger – Smart Study Scheduler
 
-**Study Forge** is a smart, modular study management system that helps students organize subjects, track topics, and master revision using the **SM-2 Spaced Repetition Algorithm**. Designed to be practical, scalable, and focused on results — not clutter.
+**Study-Forger** is a smart, modular study management system that helps students organize subjects, track topics, and master revision using the **SM-2 Spaced Repetition Algorithm**. Designed to be practical, scalable, and focused on results — not clutter.
+
+
+
+
+
+
+
+
+
+
+
 
 ---
 
@@ -33,6 +44,10 @@
 - Implements Spaced Repetition scheduling logic
 - Calculates next review date based on performance
 - Tracks ease factor, interval, and repetition count
+
+### 🔹 Dashboard Module
+- Displays total topics, due reviews, and overdue topics
+- Shows recent performance and upcoming schedule
 
 ---
 
@@ -153,8 +168,8 @@ Study-Forge/
 |-------------------------------|----------------|
 | User/Subject/Topic Modules     | ✅ Completed    |
 | Revision Scheduling (SM-2)     | ✅ Completed    |
-| Dashboard Module               | 🔄 In Progress   |
-| Notification System            | 🔜 Next Up   |
+| Dashboard Module               | ✅ Completed  |
+| Notification System            | 🔄 In Progress   |
 | JWT Authentication             | 🔜 Next Up     |
 | React Frontend                 | 🔜 Phase 2     |
 | AI-Assisted Plans              | 🧠 Future Plan |
