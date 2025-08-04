@@ -6,6 +6,8 @@ import com.studyForger.Study_Forger.Exception.NotFoundException;
 import com.studyForger.Study_Forger.Exception.ResourceNotFoundException;
 import com.studyForger.Study_Forger.Exception.UsernameAlreadyTakenException;
 import com.studyForger.Study_Forger.Helper.helper;
+import com.studyForger.Study_Forger.Role.Role;
+import com.studyForger.Study_Forger.Role.RoleRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Pageable;
+//import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Files;
@@ -30,9 +33,17 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
 
     @Value("${user.profile.image.path}")
     private String filePath;
+
+//    @Autowired
+//    private PasswordEncoder passwordEncoder;
+
+
 
 
     @Override
@@ -50,6 +61,11 @@ public class UserServiceImpl implements UserService {
         if (existingUsername != null) {
             throw new UsernameAlreadyTakenException("Username " + userDto.getUsername() + " already exists.");
         }
+        //Assign the custom role to user
+        Role role=new Role();
+        role.setId(UUID.randomUUID().toString());
+        role.setRoleName("ROLE_NORMAL");
+
         //Convert UserDto to User Entity
         User user = dtoToEntity(userDto);
         user.setId(user.getId());
@@ -59,6 +75,9 @@ public class UserServiceImpl implements UserService {
         user.setImageName(user.getImageName());
         user.setAbout(user.getAbout());
         user.setUsername(userDto.getUsername());
+
+        Role normal= roleRepository.findByRoleName("ROLE_NORMAL").orElse(role);
+        user.setRoles(List.of(normal));
         userRepository.save(user);
         //Convert User Entity to UserDto
         return entityToUserDto(user);

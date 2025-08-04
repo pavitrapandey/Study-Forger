@@ -17,7 +17,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import com.studyForger.Study_Forger.Configuration.AppConstants;
 
+
+@CrossOrigin(AppConstants.FRONT_END_URL)
 @RestController
 @RequestMapping("/api/users")
 public class UserController{

@@ -34,16 +34,17 @@ public class StudyForgerApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		//Delete all revisions
-		revisionRepository.deleteAll();
-
-		//set all topic's revision properties default
+//		//Delete all revisions
+//		revisionRepository.deleteAll();
+//
+//		//set all topic's revision properties default
 		topicRepository.findAll().forEach(topic -> {
 			topic.setRepetition(0);
 			topic.setInterval(0);
 			topic.setEaseFactor(2.5);
 			topic.setUpdatedAt(LocalDate.now());
 			topic.setNextReviewDate(LocalDate.now());
+			topic.setLastReviewDate(LocalDate.now());
 			topic.setCreatedAt(LocalDate.now().minusDays(1));
 			topic.setHaveRevised(false);
 			topicRepository.save(topic);

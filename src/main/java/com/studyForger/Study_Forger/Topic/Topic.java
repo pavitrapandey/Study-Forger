@@ -62,6 +62,7 @@ public class Topic{
     // Sm-2 Fields
     double easeFactor; //default 2.5
     int repetition;    // default 0
+    int qualityScore; // default 0, last quality score
 
     @Column(name = "interval_days")
     int interval;      // default 0

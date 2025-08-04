@@ -38,7 +38,7 @@ public class TopicServiceImpl implements TopicService{
     private ModelMapper modelMapper;
 
     private static final DateTimeFormatter DATE_FORMAT =
-            DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+            DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
     Logger logger = LoggerFactory.getLogger(TopicServiceImpl.class);
 
@@ -225,6 +225,21 @@ public class TopicServiceImpl implements TopicService{
                     .toList();
         }
         return helper.getPageableResponse(topics, TopicResponseDto.class);
+    }
+
+    @Override
+    public List<TopicResponseDto> findByUserId(String userId){
+        if (userId == null || userId.isEmpty()) {
+            throw new BadApiRequest("User ID cannot be null or empty");
+        }
+        List<Topic> topics = topicRepository.findByUserId(userId);
+        if (topics.isEmpty()) {
+            logger.info("No topics found for user with ID: " + userId);
+            throw new NotFoundException("No topics found for user with ID: " + userId);
+        }
+        return topics.stream()
+                .map(this::entityToDto)
+                .toList();
     }
 
 

@@ -6,7 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.studyForger.Study_Forger.Configuration.AppConstants;
 
+import java.util.List;
+
+
+@CrossOrigin(AppConstants.FRONT_END_URL)
 @RestController
 @RequestMapping("/api/revision")
 public class RevisionController {
@@ -15,21 +20,25 @@ public class RevisionController {
     private RevisionService revisionService;
 
     @PutMapping
-    public ResponseEntity<String> reviewTopic(@RequestBody RevisionRequestDto request){
-        String response = revisionService.reviewTopic(request.getTopicId(),request.getQualityScore()).toString();
+    public ResponseEntity<RevisionResponseDto> reviewTopic(@RequestBody RevisionRequestDto request){
+        RevisionResponseDto response = revisionService.reviewTopic(request.getTopicId(),request.getQualityScore());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("due/{userId}")
-    public ResponseEntity<PageableRespond<TopicResponseDto>> getDueTopics(
-            @PathVariable String userId
-            , @RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber,
-            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
-            @RequestParam(value = "sortBy", defaultValue = "priority", required = false) String sortBy,
-            @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir
+    public ResponseEntity<List<RevisionTopicDto>> getDueTopics(
+            @PathVariable("userId") String userId
     ) {
-        PageableRespond<TopicResponseDto> dueTopics = revisionService.dueTopics(userId, pageNumber, pageSize, sortBy, sortDir);
+       List<RevisionTopicDto> dueTopics = revisionService.dueTopics(userId);
         return new ResponseEntity<>(dueTopics, HttpStatus.OK);
+    }
+
+    @GetMapping("all/{userId}")
+    public ResponseEntity<List<RevisionTopicDto>> getAllTopicsByUserId(
+            @PathVariable("userId") String userId
+    ) {
+        List<RevisionTopicDto> allTopics = revisionService.getAllTopicsByUserId(userId);
+        return new ResponseEntity<>(allTopics, HttpStatus.OK);
     }
 
 }

@@ -20,22 +20,10 @@ public class RevisionResponseDto
     private int interval;
     private int lastQualityScore;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy hh:mm:ss a")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private LocalDate lastReviewDate;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy hh:mm:ss a")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private LocalDate nextReviewDate;
 
-    @Override
-    public String toString() {
-        return "Your Task{" +
-                "topic='" + topic + '\'' +
-                ", easeFactor=" + easeFactor +
-                ", repetition=" + repetition +
-                ", interval=" + interval +
-                ", lastQualityScore=" + lastQualityScore +
-                ", lastReviewDate=" + lastReviewDate +
-                ", nextReviewDate=" + nextReviewDate +
-                "All The Best For Your Revision!"+
-                '}';
-    }
+
 }

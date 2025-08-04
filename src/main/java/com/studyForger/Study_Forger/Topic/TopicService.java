@@ -20,6 +20,9 @@ public interface TopicService {
     PageableRespond<TopicResponseDto> searchTopicByName(String topicName, String subjectId,int size,int number,String sortBy,String sortDir);
     //search topic by difficulty
     PageableRespond<TopicResponseDto> searchTopicByDifficulty(String difficulty, String subjectId,int size,int number,String sortBy,String sortDir);
+    //Find By UserId
+   List<TopicResponseDto> findByUserId(String userId);
+
 
     Topic findTopicById(String id);
     List<Topic> findAll(String id);

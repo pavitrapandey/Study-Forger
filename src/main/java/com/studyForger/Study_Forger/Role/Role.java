@@ -17,17 +17,11 @@ public class Role {
     @Id
     private String id;
 
-    @Enumerated(EnumType.STRING)
+
     @Column(nullable = false)
-    private Roles roles;
+    private String roleName;
 
     @ManyToMany(mappedBy = "roles",fetch = FetchType.LAZY)
     private List<User> users=new ArrayList<>();
 
-
-    enum Roles{
-        ADMIN,
-        USER,
-        GUEST
-    }
 }

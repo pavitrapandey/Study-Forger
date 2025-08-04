@@ -34,9 +34,15 @@ public interface TopicRepository extends JpaRepository<Topic, String>{
     @Query("SELECT COUNT(t) FROM Topic t WHERE t.subject.createdBy.id = :userId AND t.haveRevised = true AND t.nextReviewDate = :today")
     int countByUserIdHaveRevisedToday(@Param("userId") String userId, @Param("today") LocalDate today);
 
-    @Query("SELECT t FROM Topic t WHERE t.subject.createdBy.id = :userId")
-    Page<Topic> findByUserId(@Param("userId") String userId,
-                             Pageable pageable);
+    @Query("""
+    SELECT t FROM Topic t 
+    WHERE t.subject.createdBy.id = :userId 
+    AND t.nextReviewDate IS NOT NULL 
+    AND t.nextReviewDate <= :today
+    """)
+    List<Topic> findDueTopicsIncludingToday(@Param("userId") String userId, @Param("today") LocalDate today);
 
-
+    @Query("SELECT t FROM Topic t JOIN t.subject s JOIN s.createdBy u WHERE u.id = :userId")
+    List<Topic> findByUserId(@Param("userId")
+                             String userId);
 }
