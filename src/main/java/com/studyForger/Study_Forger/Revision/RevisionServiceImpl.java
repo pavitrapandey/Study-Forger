@@ -1,21 +1,14 @@
 package com.studyForger.Study_Forger.Revision;
 
-import com.studyForger.Study_Forger.Dto.PageableRespond;
 import com.studyForger.Study_Forger.Exception.InvalidInputException;
 import com.studyForger.Study_Forger.Exception.NotFoundException;
-import com.studyForger.Study_Forger.Helper.helper;
 import com.studyForger.Study_Forger.Topic.Topic;
 import com.studyForger.Study_Forger.Topic.TopicRepository;
-import com.studyForger.Study_Forger.Topic.TopicResponseDto;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -41,69 +34,92 @@ public class RevisionServiceImpl implements RevisionService{
 
     @Override
     @Transactional
-    public RevisionResponseDto reviewTopic(String topicId, int qualityScore){
+    public RevisionResponseDto reviewTopic(String topicId, int qualityScore) {
         Topic topic = topicRepository.findById(topicId)
-                .orElseThrow(()->new NotFoundException("Topic doesn't exist please check the input: " + topicId));
+                .orElseThrow(() -> new NotFoundException("Topic doesn't exist please check the input: " + topicId));
+
+        if (topic.isCompleted()) {
+            throw new InvalidInputException("Topic already mastered ");
+        }
+
         // Validate quality score
         if (qualityScore < 0 || qualityScore > 5) {
             throw new InvalidInputException("Quality score must be between 0 and 5");
         }
-        //SM-2 Algorithm
+
+        LocalDate now = LocalDate.now();
+        boolean shouldComplete=false;
+
+
+        List<Revision> lastRevisions = revisionRepository.findTop2ByTopicIdOrderByLastReviewDateDesc(topicId);
+        if (qualityScore == 5 &&
+                topic.getQualityScore()==5){
+            // Mark topic complete directly without further SM-2 update
+            shouldComplete = true;
+            topic.setCompleted(shouldComplete);
+            topic.setNextReviewDate(null);
+            topic.setLastReviewDate(now);
+            topic.setQualityScore(qualityScore);
+            topic.setUpdatedAt(now);
+            topic.setHaveRevised(true);
+            topicRepository.save(topic);
+
+            // Save only this final revision entry
+            Revision revision = Revision.builder()
+                    .id(UUID.randomUUID().toString())
+                    .topic(topic)
+                    .repetition(topic.getRepetition())
+                    .interval(topic.getInterval())
+                    .easeFactor(topic.getEaseFactor())
+                    .lastReviewDate(now)
+                    .qualityScore(qualityScore)
+                    .nextReviewDate(null)
+                    .build();
+            revisionRepository.save(revision);
+
+            topicRepository.delete(topic);
+
+            logger.info("Topic {} mastered with two consecutive 5's.", topic.getTopicName());
+
+            return RevisionResponseDto.builder()
+                    .easeFactor(topic.getEaseFactor())
+                    .repetition(topic.getRepetition())
+                    .interval(topic.getInterval())
+                    .lastReviewDate(now)
+                    .nextReviewDate(null)
+                    .topic(topic.getTopicName())
+                    .lastQualityScore(qualityScore)
+                    .build();
+        }
+
+        // ===== SM-2 Algorithm =====
         double easinessFactor = topic.getEaseFactor();
         int interval = topic.getInterval();
         int repetition = topic.getRepetition();
 
-        //switchCase for difficulty level
+        // Difficulty adjustment
         switch (topic.getDifficulty()) {
-            case EASY:
-                easinessFactor += 0.1;
-                break;
-            case MEDIUM:
-                easinessFactor += 0.05;
-                break;
-            case HARD:
-                easinessFactor -= 0.1;
-                break;
+            case EASY: easinessFactor += 0.1; break;
+            case MEDIUM: easinessFactor += 0.05; break;
+            case HARD: easinessFactor -= 0.1; break;
         }
-        // Update easiness factor based on quality score
-        if (qualityScore >= 3) {
-            if (repetition == 0) {
-                interval = 1;
-            } else if (repetition == 1) {
-                interval = 6;
-            } else {
-                interval = (int) Math.ceil(interval * easinessFactor);
-                logger.info("Interval updated to: {}", interval);
-            }
 
+        if (qualityScore >= 3) {
+            if (repetition == 0) interval = 1;
+            else if (repetition == 1) interval = 6;
+            else interval = (int) Math.ceil(interval * easinessFactor);
             repetition++;
 
-            // Update EF
-            easinessFactor = easinessFactor + (0.1 - (5 - qualityScore) * (0.08 + (5 - qualityScore) * 0.02));
-            logger.info("Easiness Factor updated to: {}", easinessFactor);
+            easinessFactor += (0.1 - (5 - qualityScore) * (0.08 + (5 - qualityScore) * 0.02));
             if (easinessFactor < 1.3) easinessFactor = 1.3;
-
         } else {
             repetition = 0;
-            interval = 1;
-            // EF unchanged
+            interval = 1; // EF unchanged
         }
-        LocalDate now = LocalDate.now();
+
         LocalDate nextReviewDate = now.plusDays(interval);
 
-        //Check for topic gave two consecutive quality Score 5 or Not
-        List<Revision> lastRevisions = revisionRepository.findTop2ByTopicIdOrderByLastReviewDateDesc(topicId);
-        boolean shouldComplete = false;
-
-        if (qualityScore == 5 &&
-                lastRevisions.stream().allMatch(r -> r.getQualityScore() == 5)
-        ) {
-            logger.info("Topic {} has received two consecutive quality scores of 5, marking as completed.", topic.getTopicName());
-            shouldComplete = true;
-        }
-
-
-
+        // Save this revision
         Revision revision = Revision.builder()
                 .id(UUID.randomUUID().toString())
                 .topic(topic)
@@ -114,55 +130,31 @@ public class RevisionServiceImpl implements RevisionService{
                 .qualityScore(qualityScore)
                 .nextReviewDate(nextReviewDate)
                 .build();
-        // Save the revision
         revisionRepository.save(revision);
 
-        // Update topic with new values
+        // Update topic
         topic.setEaseFactor(easinessFactor);
         topic.setRepetition(repetition);
         topic.setInterval(interval);
         topic.setLastReviewDate(now);
         topic.setQualityScore(qualityScore);
-        topic.setUpdatedAt(now); // updatedAt should be the current time of the update
+        topic.setNextReviewDate(nextReviewDate);
+        topic.setUpdatedAt(now);
         topic.setHaveRevised(true);
-
-        if (shouldComplete) {
-            topic.setCompleted(true);
-            topic.setNextReviewDate(null);
-           logger.info("Topic marked as completed and next review date set to null");
-        } else {
-            topic.setNextReviewDate(nextReviewDate);
-        }
-
-
-        // Save the updated topic
         topicRepository.save(topic);
 
-        RevisionTopicDto revisionTopicDto=RevisionTopicDto.builder()
-                .topicName(topic.getTopicName())
-                .difficulty(topic.getDifficulty().name())
-                .revisionCount(topic.getRepetition())
-                .description(topic.getDescription())
-                .priority(topic.getPriority().name())
-                .easeFactor(easinessFactor)
-                .lastReviewDate(DATE_FORMAT.format(revision.getLastReviewDate()))
-                .nextReviewDate(revision.getNextReviewDate() != null ?
-                        DATE_FORMAT.format(revision.getNextReviewDate()) : null)
+        logger.info("Next Review Date: {}", nextReviewDate);
 
-                .subject(topic.getSubject().getSubjectName())
-                .build();
-        logger.info("Next Review Date: {}", revisionTopicDto.getNextReviewDate());
-
-        //return revision response
         return RevisionResponseDto.builder()
                 .easeFactor(easinessFactor)
                 .repetition(repetition)
                 .interval(interval)
                 .lastReviewDate(now)
-                .nextReviewDate(shouldComplete ? null : nextReviewDate)
+                .nextReviewDate(nextReviewDate)
                 .topic(topic.getTopicName())
                 .lastQualityScore(qualityScore)
                 .build();
+
     }
 
     @Override

@@ -1,23 +1,23 @@
 package com.studyForger.Study_Forger.User;
 
-//import com.studyForger.Study_Forger.Exception.NotFoundException;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.security.core.userdetails.UserDetails;
-//import org.springframework.security.core.userdetails.UserDetailsService;
-//import org.springframework.security.core.userdetails.UsernameNotFoundException;
-//import org.springframework.stereotype.Service;
+import com.studyForger.Study_Forger.Exception.NotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
-//@Service
-//public class CustomUserDetailService implements UserDetailsService {
-//
-//    @Autowired
-//    private UserRepository userRepository;
-//    @Override
-//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//
-//        return userRepository.findByEmail(username).
-//                orElseThrow(()->
-//                        new NotFoundException
-//                                ("User not found with this email id "+username));
-//    }
-//}
+@Service
+public class CustomUserDetailService implements UserDetailsService {
+
+    @Autowired
+    private UserRepository userRepository;
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        return userRepository.findByUsername(username).
+                orElseThrow(()->
+                        new NotFoundException
+                                ("User not found with this email id "+username));
+    }
+}

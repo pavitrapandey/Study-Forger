@@ -1,8 +1,5 @@
 package com.studyForger.Study_Forger.Revision;
 
-import com.studyForger.Study_Forger.Dto.PageableRespond;
-import com.studyForger.Study_Forger.Topic.TopicResponseDto;
-
 import java.util.List;
 
 public interface RevisionService{

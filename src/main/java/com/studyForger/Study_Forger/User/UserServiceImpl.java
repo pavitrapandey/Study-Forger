@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
             throw new EmailAlreadyExistException("Email"+ userDto.getEmail() + " already exists");
         }
         // Check if the username already exists
-        User existingUsername = userRepository.findByUsername(userDto.getUsername());
+        User existingUsername = userRepository.findByUsername(userDto.getUsername()).orElse(null);
         if (existingUsername != null) {
             throw new UsernameAlreadyTakenException("Username " + userDto.getUsername() + " already exists.");
         }
@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
             throw new EmailAlreadyExistException("Email " + userDto.getEmail() + " already exists for another user.");
         }
          //check if username exist or already taken
-        User existingUsername = userRepository.findByUsername(userDto.getUsername());
+        User existingUsername = userRepository.findByUsername(userDto.getUsername()).orElse(null);
         if (existingUsername != null && !existingUsername.getId().equals(userId)) {
             throw new UsernameAlreadyTakenException("Username " + userDto.getUsername() + " already exists for another user.");
         }

@@ -1,7 +1,5 @@
 package com.studyForger.Study_Forger.Revision;
 
-import com.studyForger.Study_Forger.Dto.PageableRespond;
-import com.studyForger.Study_Forger.Topic.TopicResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

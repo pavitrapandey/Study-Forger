@@ -7,6 +7,8 @@ import com.studyForger.Study_Forger.Role.Role;
 import com.studyForger.Study_Forger.Subject.Subject;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 //import org.springframework.security.core.GrantedAuthority;
 //import org.springframework.security.core.authority.SimpleGrantedAuthority;
 //import org.springframework.security.core.userdetails.UserDetails;
@@ -26,7 +28,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Builder
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class User {
+public class User implements UserDetails {
     @Id
     private String id;
     @Column(unique = true)
@@ -45,48 +47,45 @@ public class User {
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
      private List<Role> roles=new ArrayList<>();
 
-//    @Override
-//    public Collection<? extends GrantedAuthority> getAuthorities() {
-//        if (roles == null) {
-//            return new ArrayList<>();
-//        }
-//        Set<SimpleGrantedAuthority> authorities = roles.stream()
-//                .map(role -> new SimpleGrantedAuthority( role.getRoleName()))  // Adding ROLE_ prefix
-//                .collect(Collectors.toSet());
-//        System.out.println("authorities: "+authorities);
-//        return authorities;
-//    }
-//
-//    @Override
-//    public String getUsername() {
-//        return this.getEmail();
-//    }
-//
-//    @Override
-//    public String getPassword() {
-//        return password;
-//    }
-//
-//
-//    @Override
-//    public boolean isAccountNonExpired() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isAccountNonLocked() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isCredentialsNonExpired() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isEnabled() {
-//        return true;
-//    }
+
+
+    @Override
+    public String getUsername(){
+        return username;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+
 }
 
 
