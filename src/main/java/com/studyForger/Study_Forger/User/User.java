@@ -8,6 +8,7 @@ import com.studyForger.Study_Forger.Subject.Subject;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 //import org.springframework.security.core.GrantedAuthority;
 //import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -41,7 +42,7 @@ public class User implements UserDetails {
     private String imageName;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "createdBy", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore // prevents infinite recursion in response serialization
+    @JsonIgnore
     private List<Subject> subjects;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -55,8 +56,12 @@ public class User implements UserDetails {
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+    public Collection<? extends GrantedAuthority> getAuthorities(){
+        return roles.stream()
+                .map(
+                        role -> new SimpleGrantedAuthority(role.getRoleName()))
+                                     .collect(Collectors.toList()
+                                     );
     }
 
     @Override

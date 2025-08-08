@@ -59,6 +59,7 @@ public class SubjectServiceImpl implements SubjectService
     @Override
     public SubjectDto updateSubject(String subjectId, SubjectDto subjectDto){
         Subject subject = subjectRepository.findById(subjectId).orElseThrow(() -> new NotFoundException("Subject not found with id: " + subjectId));
+
         // Update subject fields
         subject.setSubjectName(subjectDto.getSubjectName());
         subject.setDescription(subjectDto.getDescription());
@@ -144,6 +145,10 @@ public class SubjectServiceImpl implements SubjectService
         return subjectRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Subject", "id", id));
     }
 
-
-
+    @Override
+    public String getUserIdBySubjectId(String subjectId) {
+        Subject subject = subjectRepository.findById(subjectId)
+                .orElseThrow(() -> new NotFoundException("Subject not found with id: " + subjectId));
+        return subject.getCreatedBy().getId();
+    }
 }

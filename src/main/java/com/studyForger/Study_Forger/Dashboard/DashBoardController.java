@@ -18,8 +18,8 @@ public class DashBoardController{
     private DashboardService dashboardService;
 
     @GetMapping("/{userId}")
-    public ResponseEntity<String> getDashboard(@PathVariable String userId){
-        String dashboardResponse = dashboardService.getDashboard(userId).toString();
+    public ResponseEntity<DashboardResponseDto> getDashboard(@PathVariable String userId){
+        DashboardResponseDto dashboardResponse = dashboardService.getDashboard(userId);
         return new ResponseEntity<>(dashboardResponse, HttpStatus.OK);
     }
 }

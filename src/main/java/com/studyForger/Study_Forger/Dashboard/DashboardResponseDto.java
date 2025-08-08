@@ -10,11 +10,5 @@ public class DashboardResponseDto{
     private int totalTopics;
     private int totalTopicsCompleted;
 
-    @Override
-    public String toString() {
-        return "Dashboard: " +
-                "totalTopicsForToday=" + totalTopics +
-                ", totalTopicsCompletedToday=" + totalTopicsCompleted
-                ;
-    }
+
 }

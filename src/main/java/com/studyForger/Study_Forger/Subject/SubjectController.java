@@ -32,7 +32,7 @@ public class SubjectController {
             @PathVariable("user_id") String userId
     ) {
         //Check if this user is the creator of the subject
-        if (!subjectService.getSubjectById(subject_id).getCreatedBy().getId().equals(userId)){
+        if (!subjectService.getUserIdBySubjectId(subject_id).equals(userId)){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         SubjectDto updatedSubject = subjectService.updateSubject(subject_id, subjectDto);
@@ -65,7 +65,7 @@ public class SubjectController {
                                                 @PathVariable("user_id") String userId
     ) {
         //Check if this user is the creator of the subject
-        if (!subjectService.getSubjectById(subject_id).getCreatedBy().getId().equals(userId)){
+         if (!subjectService.getUserIdBySubjectId(subject_id).equals(userId)){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         subjectService.deleteSubject(subject_id);

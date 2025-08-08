@@ -21,4 +21,6 @@ public interface SubjectService {
 
     Subject findSubjectById(String id);
 
+   String getUserIdBySubjectId(String subjectId);
+
 }

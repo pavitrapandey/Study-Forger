@@ -60,6 +60,11 @@
 
 ---
 
+### 🔐 Authentication & Roles
+- Implemented basic user management
+- Role management (Admin, Normal) is Done
+- Planned JWT-based login and session management
+
 ## 🧪 API Tested with Postman
 
 - All major routes (User, Subject, Topic, Revision, Dashboard) are fully tested for:
@@ -69,13 +74,7 @@
 
 ---
 
-## 📊 Upcoming Features
-
-### 🔹 Dashboard Module
-- Displays total topics, due reviews, overdue topics
-- Shows recent performance and upcoming schedule
-- Identifies weak areas for targeted revision
-
+## 📅 Features & Future Plans
 
 ### 🔔 Notification System
 - Daily reminders for scheduled reviews

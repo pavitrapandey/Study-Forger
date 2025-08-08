@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Pageable;
 //import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Files;
@@ -40,8 +41,8 @@ public class UserServiceImpl implements UserService {
     @Value("${user.profile.image.path}")
     private String filePath;
 
-//    @Autowired
-//    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 
 
@@ -71,7 +72,7 @@ public class UserServiceImpl implements UserService {
         user.setId(user.getId());
         user.setEmail(user.getEmail());
         user.setName(user.getName());
-        user.setPassword(user.getPassword());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setImageName(user.getImageName());
         user.setAbout(user.getAbout());
         user.setUsername(userDto.getUsername());
@@ -102,7 +103,7 @@ public class UserServiceImpl implements UserService {
          // Update user fields
         user.setUsername(userDto.getUsername());
         user.setEmail(userDto.getEmail());
-        user.setName(userDto.getName());
+        user.setName(passwordEncoder.encode(userDto.getName()));
         user.setPassword(userDto.getPassword());
         user.setAbout(userDto.getAbout());
         user.setImageName(userDto.getImageName());
