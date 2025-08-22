@@ -1,7 +1,6 @@
-package com.studyForger.Study_Forger.Files.Service.ServiceImpl;
+package com.studyForger.Study_Forger.Files;
 
 import com.studyForger.Study_Forger.Exception.BadApiRequest;
-import com.studyForger.Study_Forger.Files.Service.FileService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

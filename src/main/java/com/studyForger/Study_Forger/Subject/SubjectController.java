@@ -1,6 +1,9 @@
 package com.studyForger.Study_Forger.Subject;
 
 import com.studyForger.Study_Forger.Dto.PageableRespond;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +20,12 @@ public class SubjectController {
     private SubjectService subjectService;
 
     @PostMapping
+    @Operation(method = "POST",description = "Create a new subject under a user")
+    @ApiResponses(value={
+            @ApiResponse(description = "Subject created successfully", responseCode = "201"),
+            @ApiResponse(description = "Subject already exists", responseCode = "400"),
+            @ApiResponse(description = "Invalid request", responseCode = "400")
+    })
     public ResponseEntity<SubjectDto> createSubject(
             @RequestBody SubjectDto subjectDto,
             @PathVariable("user_id") String userId)
@@ -26,6 +35,11 @@ public class SubjectController {
     }
 
     @PutMapping("/{subject_id}")
+    @Operation(method = "PUT",description = "Update an existing subject under a user")
+    @ApiResponses(value={
+            @ApiResponse(description = "Subject updated successfully", responseCode = "200"),
+            @ApiResponse(description = "Subject not found", responseCode = "404")
+    })
     public ResponseEntity<SubjectDto> updateSubject(
             @PathVariable String subject_id,
             @RequestBody SubjectDto subjectDto,
@@ -40,6 +54,11 @@ public class SubjectController {
     }
 
     @GetMapping("/{subject_id}")
+    @Operation(method = "GET",description = "Get a subject by ID")
+    @ApiResponses(value={
+            @ApiResponse(description = "Subject found", responseCode = "200"),
+            @ApiResponse(description = "Subject not found", responseCode = "404")
+    })
     public ResponseEntity<SubjectDto> getSubjectById(@PathVariable String subject_id,
                                                      @PathVariable("user_id") String userId
     ) {
@@ -49,6 +68,11 @@ public class SubjectController {
     }
 
     @GetMapping
+    @Operation(method = "GET",description = "Get all subjects by user id")
+    @ApiResponses(value={
+            @ApiResponse(description = "Subjects found", responseCode = "200"),
+            @ApiResponse(description = "No subjects found", responseCode = "404")
+    })
     public ResponseEntity<PageableRespond<SubjectDto>> getAllSubjectsByUserId(
             @PathVariable String user_id,
             @RequestParam(defaultValue = "0") int pageNumber,
@@ -61,6 +85,11 @@ public class SubjectController {
     }
 
     @DeleteMapping("/{subject_id}")
+    @Operation(method = "DELETE",description = "Delete a subject by ID")
+    @ApiResponses(value={
+            @ApiResponse(description = "Subject deleted successfully", responseCode = "204"),
+            @ApiResponse(description = "Subject not found", responseCode = "404")
+    })
     public ResponseEntity<Void> deleteSubject(@PathVariable String subject_id,
                                                 @PathVariable("user_id") String userId
     ) {
@@ -73,6 +102,11 @@ public class SubjectController {
     }
 
     @GetMapping("/search")
+    @Operation(method = "GET",description = "Search subjects by name")
+    @ApiResponses(value={
+            @ApiResponse(description = "Subjects found", responseCode = "200"),
+            @ApiResponse(description = "No subjects found", responseCode = "404")
+    })
     public ResponseEntity<PageableRespond<SubjectDto>> searchSubjectByName(
             @RequestParam String subjectName,
             @PathVariable("user_id") String userId,

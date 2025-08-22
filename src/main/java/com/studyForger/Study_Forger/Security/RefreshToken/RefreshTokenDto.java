@@ -1,5 +1,6 @@
 package com.studyForger.Study_Forger.Security.RefreshToken;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.time.Instant;
@@ -12,7 +13,11 @@ import java.time.Instant;
 public class RefreshTokenDto{
 
     private int id;
+
+    @Schema(description = "JWT Response")
     private String token;
+
+    @Schema(description = "User information")
     private Instant expiryDate;
 
 }

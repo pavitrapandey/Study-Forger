@@ -31,6 +31,14 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthenticationFilter authenticationFilter;
 
+    private final String[] PUBLIC_URLS = {
+            "/swagger-ui/**",
+            "/swagger-resources/**",
+            "/webjars/**",
+            "/swagger-ui.html",
+            "/v2/api-docs",
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
@@ -40,6 +48,9 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
         .authorizeHttpRequests(
                 request -> request
+                        .requestMatchers(PUBLIC_URLS).permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
+
                         //User related endpoints
                         .requestMatchers("/api/users/image/**").hasRole("NORMAL")
                         .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasRole("ADMIN")

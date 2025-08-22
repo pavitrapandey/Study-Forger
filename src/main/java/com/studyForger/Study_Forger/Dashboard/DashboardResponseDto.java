@@ -1,4 +1,5 @@
 package com.studyForger.Study_Forger.Dashboard;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 @Getter
@@ -7,8 +8,11 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class DashboardResponseDto{
-    private int totalTopics;
-    private int totalTopicsCompleted;
 
+    @Schema(description = "Total Number of Topics have to review on that particular day")
+    private int totalTopics;
+
+    @Schema(description = "Total Number of topics have been review so far")
+    private int totalTopicsCompleted;
 
 }

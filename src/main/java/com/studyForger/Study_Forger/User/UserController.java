@@ -2,7 +2,10 @@ package com.studyForger.Study_Forger.User;
 
 import com.studyForger.Study_Forger.Dto.PageableRespond;
 import com.studyForger.Study_Forger.Files.ImageResponse;
-import com.studyForger.Study_Forger.Files.Service.FileService;
+import com.studyForger.Study_Forger.Files.FileService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,18 +39,34 @@ public class UserController{
 
 
     @PostMapping
+    @Operation(method = "POST",description = "Create a new user")
+    @ApiResponses(value={
+            @ApiResponse(description = "User created successfully", responseCode = "201"),
+            @ApiResponse(description = "User already exists", responseCode = "400"),
+            @ApiResponse(description = "Invalid request", responseCode = "400")
+    })
     public ResponseEntity<UserDto> createUser(@RequestBody @Valid UserDto userDto){
         UserDto createdUser = userService.createUser(userDto);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
     @GetMapping("/{userId}")
+    @Operation(method = "GET",description = "Get user by ID")
+    @ApiResponses(value={
+            @ApiResponse(description = "User found", responseCode = "200"),
+            @ApiResponse(description = "User not found", responseCode = "404")
+    })
     public ResponseEntity<UserDto> getUserById(@PathVariable String userId) {
         UserDto userDto = userService.getUserById(userId);
         return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
 
     @GetMapping
+    @Operation(method = "GET",description = "Get all users")
+    @ApiResponses(value={
+            @ApiResponse(description = "Users found", responseCode = "200"),
+            @ApiResponse(description = "No users found", responseCode = "404")
+    })
     public ResponseEntity<PageableRespond<UserDto>> getAllUsers(
             @RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber,
             @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
@@ -59,12 +78,22 @@ public class UserController{
     }
 
     @PutMapping("/{userId}")
+    @Operation(method = "PUT",description = "Update user details")
+    @ApiResponses(value={
+            @ApiResponse(description = "User updated successfully", responseCode = "200"),
+            @ApiResponse(description = "User not found", responseCode = "404")
+    })
     public ResponseEntity<UserDto> updateUser(@Valid @PathVariable String userId, @RequestBody UserDto userDto) {
         UserDto updatedUser = userService.updateUser(userId, userDto);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
     @DeleteMapping("/{userId}")
+    @Operation(method = "DELETE",description = "Delete user by ID")
+    @ApiResponses(value={
+            @ApiResponse(description = "User deleted successfully", responseCode = "204"),
+            @ApiResponse(description = "User not found", responseCode = "404")
+    })
     public ResponseEntity<Void> deleteUser(@PathVariable String userId) {
         userService.deleteUser(userId);
 
@@ -72,6 +101,12 @@ public class UserController{
     }
 
     @GetMapping("/email/{email}")
+    @Operation(method = "GET",description = "Get user by email")
+    @ApiResponses(value={
+            @ApiResponse(description = "User found", responseCode = "200"),
+            @ApiResponse(description = "User not found", responseCode = "404")
+    })
+
     public ResponseEntity<UserDto> getUserByEmail(@PathVariable String email) {
         UserDto userDto = userService.getUserByEmail(email);
         return new ResponseEntity<>(userDto, HttpStatus.OK);
@@ -79,6 +114,13 @@ public class UserController{
 
     //Upload user image
     @PostMapping("/image/{userId}")
+    @Operation(method = "POST",description = "Upload user image")
+    @ApiResponses(value={
+            @ApiResponse(description = "Image uploaded successfully", responseCode = "201"),
+            @ApiResponse(description = "User not found", responseCode = "404"),
+            @ApiResponse(description = "Invalid request", responseCode = "400")
+    })
+
     public ResponseEntity<ImageResponse> uploadUserImage(
             @PathVariable String userId,
             @RequestParam("image") MultipartFile image) throws IOException {
@@ -95,6 +137,13 @@ public class UserController{
 
     //serve image
     @GetMapping("/image/{userId}")
+    @Operation(method = "GET",description = "Serve user image")
+    @ApiResponses(value={
+            @ApiResponse(description = "Image served successfully", responseCode = "200"),
+            @ApiResponse(description = "User not found", responseCode = "404"),
+            @ApiResponse(description = "Image not found", responseCode = "404")
+    })
+
     public void serveUserImage(@PathVariable String userId, HttpServletResponse response) throws IOException {
         UserDto user = userService.getUserById(userId);
         InputStream resource = fileService.getResource(imageUploadPath, user.getImageName());
@@ -103,6 +152,12 @@ public class UserController{
     }
 
     @DeleteMapping("/image/{userId}")
+    @Operation(method = "DELETE",description = "Delete user image")
+    @ApiResponses(value={
+            @ApiResponse(description = "Image deleted successfully", responseCode = "204"),
+            @ApiResponse(description = "User not found", responseCode = "404"),
+            @ApiResponse(description = "Image not found", responseCode = "404")
+    })
     public ResponseEntity<ImageResponse> deleteUserImage(@PathVariable String userId) {
         try {
             UserDto user = userService.getUserById(userId);
