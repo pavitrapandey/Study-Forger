@@ -121,15 +121,15 @@ public class StudyForgerApplication implements CommandLineRunner {
 //			userRepository.save(user1);
 //			System.out.println("User 2 Created");
 //		}
-		User user=userRepository.findByEmail("pavitrapandey77@gmail.com").get();
-		String token = helper.generateToken(user);
-		System.out.println("Token: " + token);
-		System.out.println("Username from token: " + helper.getUsernameFromToken(token));
-		if (helper.isTokenExpired(token)) {
-			System.out.println("Token is expired");
-		} else {
-			System.out.println("Token is valid");
-		}
+//		User user=userRepository.findByEmail("pavitrapandey77@gmail.com").get();
+//		String token = helper.generateToken(user);
+//		System.out.println("Token: " + token);
+//		System.out.println("Username from token: " + helper.getUsernameFromToken(token));
+//		if (helper.isTokenExpired(token)) {
+//			System.out.println("Token is expired");
+//		} else {
+//			System.out.println("Token is valid");
+//		}
 
 	}
 }

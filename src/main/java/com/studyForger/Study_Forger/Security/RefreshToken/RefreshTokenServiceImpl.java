@@ -25,7 +25,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Override
     public RefreshTokenDto createRefreshToken(String username){
         // Fetch the user by username
-        User user= userRepository.findByEmail(username)
+        User user= userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with username: " + username));
         //check if token already exists for the user
         RefreshToken refreshToken=  refreshTokenRepository.findByUser(user).orElse(null);
